@@ -17,6 +17,7 @@ Office.onReady((info) => {
 
 	// Assign event handlers and other initialization logic.
 	document.getElementById("create-table").onclick = createTable;
+	document.getElementById("filter-table").onclick = filterTable;
 
 
   }
@@ -75,6 +76,26 @@ function createTable() {
 		expensesTable.getRange().format.autofitRows();
 
 
+        return context.sync();
+    })
+    .catch(function (error) {
+        console.log("Error: " + error);
+        if (error instanceof OfficeExtension.Error) {
+            console.log("Debug info: " + JSON.stringify(error.debugInfo));
+        }
+    });
+}
+
+function filterTable() {
+    Excel.run(function (context) {
+
+        // TODO1: Queue commands to filter out all expense categories except
+        //        Groceries and Education.
+		var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+		var expensesTable = currentWorksheet.tables.getItem('ExpensesTable');
+		var categoryFilter = expensesTable.columns.getItem('Category').filter;
+		categoryFilter.applyValuesFilter(['Education', 'Groceries']);
+		
         return context.sync();
     })
     .catch(function (error) {
